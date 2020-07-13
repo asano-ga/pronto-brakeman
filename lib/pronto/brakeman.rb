@@ -18,6 +18,18 @@ module Pronto
       []
     end
 
+    def ruby_file?(path)
+      rb_file?(path) || rake_file?(path) || ruby_executable?(path) || template_file?(path)
+    end
+
+    def template_file?(path)
+      File.extname(path) == pronto_brakeman_config['template_ext'] || '.erb'
+    end
+    
+    def pronto_brakeman_config
+      @pronto_brakeman_config ||= Pronto::ConfigFile.new.to_h['brakeman'] || {}
+    end
+
     def messages_for(ruby_patches, output)
       output.filtered_warnings.map do |warning|
         patch = patch_for_warning(ruby_patches, warning)
